@@ -56,7 +56,8 @@
     "copy-demo-files": "copyfiles --up 1 test/data/sample.mp3 test/data/07023003.mp3 test/data/07023003-2channel.dat demo",
     "prestart": "npm run build && npm run build-demo && npm run copy-demo-files",
     "start": "serve --listen 8080 --no-clipboard --no-request-logging demo",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "dev": "vite"
   },
   "devDependencies": {
     "@babel/preset-env": "~7.27.1",
@@ -85,13 +86,16 @@
     "karma-rollup-preprocessor": "~7.0.8",
     "karma-safari-launcher": "~1.0.0",
     "karma-spec-reporter": "~0.0.36",
+    "konva": "^9.3.20",
     "mocha": "~11.2.2",
     "rollup": "~4.40.1",
     "rollup-plugin-peer-deps-external": "~2.2.4",
     "serve": "~14.2.3",
     "sinon": "~20.0.0",
     "sinon-chai": "~3.7.0",
-    "watchify": "~4.0.0"
+    "vite": "^6.3.5",
+    "watchify": "~4.0.0",
+    "waveform-data": "^4.5.1"
   },
   "dependencies": {
     "eventemitter3": "~5.0.1"

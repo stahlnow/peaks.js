@@ -47,6 +47,7 @@ function Peaks() {
     withCredentials:     false,
 
     waveformData:        null,
+    spectrogramData:     { image: '', crop: {} },
     webAudio:            null,
 
     nudgeIncrement:      1.0,
@@ -95,6 +96,17 @@ const defaultZoomviewOptions = {
   enableEditing:          true
 };
 
+const defaultSpectrogramZoomviewOptions = {
+  playheadClickTolerance: 3,
+  waveformColor: 'rgba(0, 225, 128, 1)',
+  wheelMode: 'none',
+  autoScroll: true,
+  autoScrollOffset: 100,
+  spectrogramOpacity: 1,
+  showSpectrogram: true,
+  showWaveform: false
+};
+
 const defaultOverviewOptions = {
   // showPlayheadTime:    false,
   waveformColor:          'rgba(0, 0, 0, 0.2)',
@@ -104,6 +116,19 @@ const defaultOverviewOptions = {
   highlightOffset:        11,
   highlightCornerRadius:  2,
   enableEditing:          false
+};
+
+const defaultSpectrogramOverviewOptions = {
+  waveformColor: 'rgba(0, 0, 0, 0.2)',
+  highlightColor: '#aaaaaa',
+  highlightStrokeColor: 'transparent',
+  highlightOpacity: 0.3,
+  highlightOffset: 11,
+  highlightCornerRadius: 2,
+  enableEditing:          false,
+  spectrogramOpacity: 1,
+  showSpectrogram: true,
+  showWaveform: false
 };
 
 const defaultSegmentOptions = {
@@ -189,6 +214,64 @@ function getOverviewOptions(opts) {
   return overviewOptions;
 }
 
+function getSpectrogramOverviewOptions(opts) {
+  const spectrogramOverviewOptions = {};
+
+  if (opts.spectrogramOverview && opts.spectrogramOverview.showPlayheadTime) {
+    spectrogramOverviewOptions.showPlayheadTime = opts.spectrogramOverview.showPlayheadTime;
+  }
+  const optNames = [
+    'container',
+    'waveformColor',
+    'playedWaveformColor',
+    'playheadColor',
+    'playheadTextColor',
+    'playheadBackgroundColor',
+    'playheadPadding',
+    'playheadWidth',
+    'formatPlayheadTime',
+    'timeLabelPrecision',
+    'axisGridlineColor',
+    'showAxisLabels',
+    'axisTopMarkerHeight',
+    'axisBottomMarkerHeight',
+    'axisLabelColor',
+    'formatAxisTime',
+    'fontFamily',
+    'fontSize',
+    'fontStyle',
+    'highlightColor',
+    'highlightStrokeColor',
+    'highlightOpacity',
+    'highlightCornerRadius',
+    'highlightOffset',
+    'enablePoints',
+    'enableSegments',
+    'enableEditing',
+    'spectrogramOpacity',
+    'showSpectrogram',
+    'showWaveform'
+  ];
+
+  optNames.forEach(function(optName) {
+    if (opts.spectrogramOverview && objectHasProperty(opts.spectrogramOverview, optName)) {
+      spectrogramOverviewOptions[optName] = opts.spectrogramOverview[optName];
+    }
+    else if (objectHasProperty(opts, optName)) {
+      spectrogramOverviewOptions[optName] = opts[optName];
+    }
+    else if (!objectHasProperty(spectrogramOverviewOptions, optName)) {
+      if (objectHasProperty(defaultSpectrogramOverviewOptions, optName)) {
+        spectrogramOverviewOptions[optName] = defaultSpectrogramOverviewOptions[optName];
+      }
+      else if (objectHasProperty(defaultViewOptions, optName)) {
+        spectrogramOverviewOptions[optName] = defaultViewOptions[optName];
+      }
+    }
+  });
+  return spectrogramOverviewOptions;
+}
+
 function getZoomviewOptions(opts) {
   const zoomviewOptions = {};
 
@@ -246,6 +329,66 @@ function getZoomviewOptions(opts) {
   });
 
   return zoomviewOptions;
+}
+
+function getSpectrogramZoomviewOptions(opts) {
+  const spectrogramZoomviewOptions = {};
+
+  if (opts.showPlayheadTime) {
+    spectrogramZoomviewOptions.showPlayheadTime = opts.showPlayheadTime;
+  }
+  else if (opts.spectrogramZoomview && opts.spectrogramZoomview.showPlayheadTime) {
+    spectrogramZoomviewOptions.showPlayheadTime = opts.spectrogramZoomview.showPlayheadTime;
+  }
+  const optNames = [
+    'container',
+    'waveformColor',
+    'playedWaveformColor',
+    'playheadColor',
+    'playheadTextColor',
+    'playheadBackgroundColor',
+    'playheadPadding',
+    'playheadWidth',
+    'formatPlayheadTime',
+    'playheadClickTolerance',
+    'timeLabelPrecision',
+    'axisGridlineColor',
+    'showAxisLabels',
+    'axisTopMarkerHeight',
+    'axisBottomMarkerHeight',
+    'axisLabelColor',
+    'formatAxisTime',
+    'fontFamily',
+    'fontSize',
+    'fontStyle',
+    'wheelMode',
+    'autoScroll',
+    'autoScrollOffset',
+    'enablePoints',
+    'enableSegments',
+    'enableEditing',
+    'showSpectrogram',
+    'showWaveform',
+    'spectrogramOpacity'
+  ];
+
+  optNames.forEach(function(optName) {
+    if (opts.spectrogramZoomview && objectHasProperty(opts.spectrogramZoomview, optName)) {
+      spectrogramZoomviewOptions[optName] = opts.spectrogramZoomview[optName];
+    }
+    else if (objectHasProperty(opts, optName)) {
+      spectrogramZoomviewOptions[optName] = opts[optName];
+    }
+    else if (!objectHasProperty(spectrogramZoomviewOptions, optName)) {
+      if (objectHasProperty(defaultSpectrogramZoomviewOptions, optName)) {
+        spectrogramZoomviewOptions[optName] = defaultSpectrogramZoomviewOptions[optName];
+      }
+      else if (objectHasProperty(defaultViewOptions, optName)) {
+        spectrogramZoomviewOptions[optName] = defaultViewOptions[optName];
+      }
+    }
+  });
+  return spectrogramZoomviewOptions;
 }
 
 function getScrollbarOptions(opts) {
@@ -306,14 +449,39 @@ function addSegmentOptions(options, opts) {
   if (opts.overview && opts.overview.segmentOptions) {
     extendOptions(options.overview.segmentOptions, opts.overview.segmentOptions);
   }
+
+  options.spectrogramOverview.segmentOptions = {};
+  extend(options.spectrogramOverview.segmentOptions, options.segmentOptions);
+
+  if (opts.spectrogramOverview && opts.spectrogramOverview.segmentOptions) {
+    extendOptions(
+      options.spectrogramOverview.segmentOptions,
+      opts.spectrogramOverview.segmentOptions
+    );
+  }
+
+  options.spectrogramZoomview.segmentOptions = {};
+  extend(options.spectrogramZoomview.segmentOptions, options.segmentOptions);
+
+  if (opts.spectrogramZoomview && opts.spectrogramZoomview.segmentOptions) {
+    extendOptions(
+      options.spectrogramZoomview.segmentOptions,
+      opts.spectrogramZoomview.segmentOptions
+    );
+  }
 }
 
 function checkContainerElements(options) {
   const zoomviewContainer = options.zoomview.container;
+  const spectrogramZoomviewContainer = options.spectrogramZoomview.container;
   const overviewContainer = options.overview.container;
+  const spectrogramOverviewContainer = options.spectrogramOverview.container;
 
-  if (!isHTMLElement(zoomviewContainer) &&
-      !isHTMLElement(overviewContainer)) {
+  if ((!isHTMLElement(zoomviewContainer) &&
+      !isHTMLElement(overviewContainer)) &&
+      (!isHTMLElement(spectrogramZoomviewContainer) &&
+      !isHTMLElement(spectrogramOverviewContainer))
+  ) {
     // eslint-disable-next-line @stylistic/js/max-len
     return new TypeError('Peaks.init(): The zoomview and/or overview container options must be valid HTML elements');
   }
@@ -330,6 +498,20 @@ function checkContainerElements(options) {
        overviewContainer.clientHeight <= 0)) {
     // eslint-disable-next-line @stylistic/js/max-len
     return new Error('Peaks.init(): The overview container must be visible and have non-zero width and height');
+  }
+
+  if (spectrogramZoomviewContainer &&
+      (spectrogramZoomviewContainer.clientWidth  <= 0 ||
+       spectrogramZoomviewContainer.clientHeight <= 0)) {
+    // eslint-disable-next-line @stylistic/js/max-len
+    return new Error('Peaks.init(): The spectrogram zoomview container must be visible and have non-zero width and height');
+  }
+
+  if (spectrogramOverviewContainer &&
+      (spectrogramOverviewContainer.clientWidth  <= 0 ||
+       spectrogramOverviewContainer.clientHeight <= 0)) {
+    // eslint-disable-next-line @stylistic/js/max-len
+    return new Error('Peaks.init(): The spectrogram overview container must be visible and have non-zero width and height');
   }
 }
 
@@ -412,16 +594,27 @@ Peaks.init = function(opts, callback) {
 
         instance._waveformBuilder = null;
         instance._waveformData = waveformData;
+        instance._spectrogramData = instance.options.spectrogramData;
 
         const zoomviewContainer = instance.options.zoomview.container;
+        const spectrogramZoomviewContainer = instance.options.spectrogramZoomview.container;
         const overviewContainer = instance.options.overview.container;
+        const spectrogramOverviewContainer = instance.options.spectrogramOverview.container;
 
         if (zoomviewContainer) {
           instance.views.createZoomview(zoomviewContainer);
         }
 
+        if (spectrogramZoomviewContainer) {
+          instance.views.createSpectrogramZoomview(spectrogramZoomviewContainer);
+        }
+
         if (overviewContainer) {
           instance.views.createOverview(overviewContainer);
+        }
+
+        if (spectrogramOverviewContainer) {
+          instance.views.createSpectrogramOverview(spectrogramOverviewContainer);
         }
 
         if (scrollbarContainer) {
@@ -478,7 +671,9 @@ Peaks.prototype._setOptions = function(opts) {
   extendOptions(this.options, opts);
 
   this.options.overview = getOverviewOptions(opts);
+  this.options.spectrogramOverview = getSpectrogramOverviewOptions(opts);
   this.options.zoomview = getZoomviewOptions(opts);
+  this.options.spectrogramZoomview = getSpectrogramZoomviewOptions(opts);
   this.options.scrollbar = getScrollbarOptions(opts);
 
   addSegmentOptions(this.options, opts);
@@ -578,6 +773,14 @@ Peaks.prototype.setSource = function(options, callback) {
           }
         });
 
+        ['spectrogramOverview', 'spectrogramZoomview'].forEach(function(viewName) {
+          const view = self.views.getView(viewName);
+
+          if (view) {
+            view.setSpectrogramData(options.spectrogramData);
+          }
+        });
+
         self.zoom.setZoomLevels(options.zoomLevels);
 
         callback();
@@ -590,6 +793,10 @@ Peaks.prototype.setSource = function(options, callback) {
 
 Peaks.prototype.getWaveformData = function() {
   return this._waveformData;
+};
+
+Peaks.prototype.getSpectrogramData = function() {
+  return this._spectrogramData;
 };
 
 /**

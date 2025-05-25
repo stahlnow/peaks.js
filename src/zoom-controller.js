@@ -68,11 +68,15 @@ ZoomController.prototype.setZoom = function(zoomLevelIndex, forceUpdate) {
 
   const zoomview = this._peaks.views.getView('zoomview');
 
-  if (!zoomview) {
-    return;
+  if (zoomview !== null) {
+    zoomview.setZoom({ scale: this._zoomLevels[zoomLevelIndex] });
   }
 
-  zoomview.setZoom({ scale: this._zoomLevels[zoomLevelIndex] });
+  const spectrogramZoomview = this._peaks.views.getView('spectrogramZoomview');
+
+  if (spectrogramZoomview !== null) {
+    spectrogramZoomview.setZoom({ scale: this._zoomLevels[zoomLevelIndex] });
+  }
 };
 
 /**
