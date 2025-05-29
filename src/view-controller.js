@@ -142,9 +142,6 @@ ViewController.prototype.destroySpectrogramOverview = function() {
   if (!this._spectrogramOverview) {
     return;
   }
-  if (!this._spectrogramZoomview) {
-    return;
-  }
   this._spectrogramOverview.destroy();
   this._spectrogramOverview = null;
 };

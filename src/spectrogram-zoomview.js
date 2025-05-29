@@ -213,7 +213,7 @@ SpectrogramZoomView.prototype.getSegmentDragMode = function() {
 };
 
 SpectrogramZoomView.prototype.getName = function() {
-  return 'zoomview';
+  return 'spectrogramZoomview';
 };
 
 SpectrogramZoomView.prototype._onTimeUpdate = function(time) {
@@ -515,9 +515,6 @@ SpectrogramZoomView.prototype.updateWaveform = function(frameOffset, forceUpdate
     upperLimit = this._pixelLength - this._width;
   }
 
-  this._spectrogramImage.update();
-  this._spectrogramLayer.draw();
-
   frameOffset = clamp(frameOffset, 0, upperLimit);
 
   if (!forceUpdate && frameOffset === this._frameOffset) {
@@ -526,8 +523,8 @@ SpectrogramZoomView.prototype.updateWaveform = function(frameOffset, forceUpdate
 
   this._frameOffset = frameOffset;
 
-  // this._spectrogramImage.update(frameOffset);
-  // this._spectrogramLayer.draw();
+  this._spectrogramImage.update(frameOffset);
+  this._spectrogramLayer.draw();
 
   // Display playhead if it is within the zoom frame width.
   const playheadPixel = this._playheadLayer.getPlayheadPixel();

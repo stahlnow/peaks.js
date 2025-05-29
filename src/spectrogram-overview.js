@@ -75,7 +75,7 @@ SpectrogramOverview.prototype.isSegmentDraggingEnabled = function() {
 };
 
 SpectrogramOverview.prototype.getName = function() {
-  return 'overview';
+  return 'spectrogramOverview';
 };
 
 SpectrogramOverview.prototype._onTimeUpdate = function(time) {

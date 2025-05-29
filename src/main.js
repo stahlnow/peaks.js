@@ -777,6 +777,7 @@ Peaks.prototype.setSource = function(options, callback) {
           const view = self.views.getView(viewName);
 
           if (view) {
+            view.setWaveformData(waveformData);
             view.setSpectrogramData(options.spectrogramData);
           }
         });

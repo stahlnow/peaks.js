@@ -71,9 +71,7 @@ function SpectrogramView(waveformData, spectrogramData, container, peaks, viewOp
     self._createSpectrogram();
   }
 
-  if (self._viewOptions.showWaveform) {
-    self._createWaveform();
-  }
+  self._createWaveform();
 
   if (self._viewOptions.enableSegments) {
     self._segmentsLayer = new SegmentsLayer(peaks, self, self._viewOptions.enableEditing);
@@ -128,6 +126,7 @@ SpectrogramView.prototype.getSpectrogramData = function() {
 
 SpectrogramView.prototype.setSpectrogramData = function(spectrogramData) {
   this._spectrogramData = spectrogramData;
+  this._spectrogramImage.destroy();
   this._spectrogramImage.setImage();
 };
 
@@ -225,16 +224,18 @@ SpectrogramView.prototype._createWaveform = function() {
 
   this._createWaveformShapes();
 
-  this._stage.add(this._waveformLayer);
+  if (this._viewOptions.showWaveform) {
+    this._stage.add(this._waveformLayer);
+  }
 };
 
 SpectrogramView.prototype._createSpectrogram = function() {
   this._spectrogramLayer = new Konva.Layer({ listening: false });
   if (!this._spectrogramImage) {
-    this._spectrogramImage = new SpectrogramImage({
-      opacity: this._spectrogramOpacity,
-      view: this
-    });
+    this._spectrogramImage = new SpectrogramImage(
+      this._spectrogramOpacity,
+      this
+    );
   }
   this._stage.add(this._spectrogramLayer);
 };
@@ -272,6 +273,10 @@ SpectrogramView.prototype._createWaveformShapes = function() {
 
     this._playedWaveformShape.addToLayer(this._waveformLayer);
   }
+};
+
+SpectrogramView.prototype.setWaveformOpacity = function(opacity) {
+  this._waveformShape._shape.to({ opacity: opacity });
 };
 
 SpectrogramView.prototype.setWaveformColor = function(color) {

@@ -13,7 +13,11 @@ const options = {
   spectrogramOverview: {
     container: document.getElementById('spectrogram-overview-container'),
     showWaveform: true,
-    waveformColor: 'rgba(255, 255, 255, 0.3)',
+    waveformColor: 'rgb(187, 255, 187)',
+    playheadColor: '#fff',
+    playheadTextColor: '#fff',
+    axisGridlineColor: '#fff',
+    axisLabelColor: '#fff'
   },
   spectrogramData: {
     image: "spectrogram.png",
@@ -24,16 +28,6 @@ const options = {
       height: 513,
     },
   },
-  /*
-   * zoomview: {
-   *   container: document.getElementById('zoomview-container'),
-   *   playheadClickTolerance: 3
-   * },
-   * overview: {
-   *   container: document.getElementById('overview-container'),
-   *   waveformColor: 'rgba(255, 0, 255, 0.5)',
-   * },
-   */
   mediaElement: document.getElementById('audio'),
   dataUri: {
     json: '/dial.json'
@@ -166,30 +160,51 @@ Peaks.init(options, function(err, peaksInstance) {
 
   document.querySelector('input[data-action="toggle-waveform"]').addEventListener('change', function(event) {
     const value = event.target.checked;
-    peaksInstance.views.destroySpectrogramZoomview();
-    var container = document.getElementById('spectrogram-zoomview-container');
-
     if (value) {
-      peaksInstance.options.spectrogramZoomview.showWaveform = true;
+      peaksInstance.views.getView('spectrogramZoomview').setWaveformOpacity(1.0);
     }
     else {
-      peaksInstance.options.spectrogramZoomview.showWaveform = false;
+      peaksInstance.views.getView('spectrogramZoomview').setWaveformOpacity(0.0);
     }
-    peaksInstance.views.createSpectrogramZoomview(container);
   });
 
 
   document.querySelector('input[data-action="toggle-spectrogram"]').addEventListener('change', function(event) {
     const value = event.target.checked;
-    peaksInstance.views.destroySpectrogramZoomview();
-    var container = document.getElementById('spectrogram-zoomview-container');
     if (value) {
-      peaksInstance.options.spectrogramZoomview.showSpectrogram = true;
+      peaksInstance.views.getView('spectrogramZoomview').setOpacity(1.0);
     }
     else {
-      peaksInstance.options.spectrogramZoomview.showSpectrogram = false;
+      peaksInstance.views.getView('spectrogramZoomview').setOpacity(0.0);
     }
-    peaksInstance.views.createSpectrogramZoomview(container);
+  });
+
+  /* set source */
+  document.querySelector('input[data-action="set-source"]').addEventListener('click', function(event) {
+    const options = {
+      spectrogramData: {
+        image: "test.png",
+        crop: {
+          x: 58,
+          y: 30,
+          width: 998,
+          height: 513,
+        },
+      },
+      mediaElement: document.getElementById('audio'),
+      mediaUrl: 'test.mp3',
+      dataUri: {
+        json: 'test.json'
+      },
+    };
+    peaksInstance.setSource(options, (error) => {
+      if (error) {
+        console.error(error);
+      }
+      else {
+        console.log('Set source successfully');
+      }
+    });
   });
 
 
