@@ -415,6 +415,11 @@ declare module 'peaks.js' {
     previousZoom: number;
   }
 
+  interface ZoomViewUpdateEvent {
+    startTime: number;
+    endTime: number;
+  }
+
   interface InstanceEvents {
     'points.add': (event: PointsAddEvent) => void;
     'points.click': (event: PointClickEvent) => void;
@@ -450,6 +455,7 @@ declare module 'peaks.js' {
     'zoomview.dblclick': (event: WaveformViewMouseEvent) => void;
     'overview.contextmenu': (event: WaveformViewPointerEvent) => void;
     'zoomview.contextmenu': (event: WaveformViewPointerEvent) => void;
+    'zoomview.update': (event: ZoomViewUpdateEvent) => void;
     'zoom.update': (event: ZoomChangeEvent) => void;
   }
 
@@ -490,6 +496,8 @@ declare module 'peaks.js' {
   }
 
   interface WaveformView {
+    getStartTime: () => number;
+    getEndTime: () => number;
     setAmplitudeScale: (scale: number) => void;
     setWaveformColor: (color: WaveformColor) => void;
     setPlayedWaveformColor: (color: WaveformColor | null) => void;

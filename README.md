@@ -1,4 +1,6 @@
-[![Build Status](https://github.com/bbc/peaks.js/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/bbc/peaks.js/actions) [![npm](https://img.shields.io/npm/v/peaks.js.svg)](https://www.npmjs.com/package/peaks.js)
+**Note:** Ongoing development of this project has moved to https://codeberg.org/chrisn/peaks.js.
+
+[![Build Status](https://github.com/bbc/peaks.js/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/bbc/peaks.js/actions) [![npm](https://img.shields.io/npm/v/peaks.js.svg)](https://www.npmjs.com/package/peaks.js)
 
 <p align="center">
   <a href="https://github.com/bbc/peaks.js"><img src="peaks-logo.svg" alt="Peaks.js" height="120" /></a>
