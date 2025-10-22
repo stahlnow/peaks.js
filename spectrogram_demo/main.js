@@ -28,6 +28,16 @@ const options = {
       height: 513,
     },
   },
+  segmentOptions: {
+    overlay: true,
+    overlayColor: 'rgb(255, 218, 187)',
+    overlayOpacity: 0.4,
+    overlayBorderColor: '#ffffff',
+    overlayBorderWidth: 2,
+    overlayCornerRadius: 0,
+    // Segment overlay offset from the top and bottom of the waveform view, in pixels
+    overlayOffset: 0
+  },
   mediaElement: document.getElementById('audio'),
   dataUri: {
     json: '/dial.json'
@@ -39,7 +49,7 @@ const options = {
   zoomLevels: [512, 1024, 2048, 4096]
 };
 
-Peaks.init(options, function(err, peaksInstance) {
+Peaks.init(options, function (err, peaksInstance) {
   if (err) {
     console.error(err.message);
     return;
@@ -47,17 +57,26 @@ Peaks.init(options, function(err, peaksInstance) {
 
   console.log("Peaks instance ready");
 
-  document.querySelector('[data-action="zoom-in"]').addEventListener('click', function() {
+  var segmentCounter = 1;
+
+  // add a test segment
+  peaksInstance.segments.add({
+    startTime: 1,
+    endTime: 2,
+    labelText: 'Test segment ' + segmentCounter++,
+    editable: true,
+    overlay: true
+  });
+
+  document.querySelector('[data-action="zoom-in"]').addEventListener('click', function () {
     peaksInstance.zoom.zoomIn();
   });
 
-  document.querySelector('[data-action="zoom-out"]').addEventListener('click', function() {
+  document.querySelector('[data-action="zoom-out"]').addEventListener('click', function () {
     peaksInstance.zoom.zoomOut();
   });
 
-  var segmentCounter = 1;
-
-  document.querySelector('button[data-action="add-segment"]').addEventListener('click', function() {
+  document.querySelector('button[data-action="add-segment"]').addEventListener('click', function () {
     peaksInstance.segments.add({
       startTime: peaksInstance.player.getCurrentTime(),
       endTime: peaksInstance.player.getCurrentTime() + 2,
@@ -66,7 +85,7 @@ Peaks.init(options, function(err, peaksInstance) {
     });
   });
 
-  document.querySelector('button[data-action="add-point"]').addEventListener('click', function() {
+  document.querySelector('button[data-action="add-point"]').addEventListener('click', function () {
     peaksInstance.points.add({
       time: peaksInstance.player.getCurrentTime(),
       labelText: 'Test point',
@@ -74,7 +93,7 @@ Peaks.init(options, function(err, peaksInstance) {
     });
   });
 
-  document.querySelector('button[data-action="seek"]').addEventListener('click', function(event) {
+  document.querySelector('button[data-action="seek"]').addEventListener('click', function (event) {
     var time = document.getElementById('seek-time').value;
     var seconds = parseFloat(time);
 
@@ -83,28 +102,28 @@ Peaks.init(options, function(err, peaksInstance) {
     }
   });
 
-  document.getElementById('mousewheel-mode').addEventListener('change', function(event) {
+  document.getElementById('mousewheel-mode').addEventListener('change', function (event) {
     var mode = event.target.value;
     var view = peaksInstance.views.getView('spectrogramZoomview');
 
     view.setWheelMode(mode);
   });
 
-  document.querySelector('button[data-action="destroy"]').addEventListener('click', function(event) {
+  document.querySelector('button[data-action="destroy"]').addEventListener('click', function (event) {
     peaksInstance.destroy();
   });
 
-  document.getElementById('auto-scroll').addEventListener('change', function(event) {
+  document.getElementById('auto-scroll').addEventListener('change', function (event) {
     var view = peaksInstance.views.getView('spectrogramZoomview');
     view.enableAutoScroll(event.target.checked);
   });
 
-  document.getElementById('playhead-time').addEventListener('change', function(event) {
+  document.getElementById('playhead-time').addEventListener('change', function (event) {
     var view = peaksInstance.views.getView('spectrogramZoomview');
     view.showPlayheadTime(event.target.checked);
   });
 
-  document.getElementById('enable-seek').addEventListener('change', function(event) {
+  document.getElementById('enable-seek').addEventListener('change', function (event) {
     var overview = peaksInstance.views.getView('spectrogramOverview');
     var zoomview = peaksInstance.views.getView('spectrogramZoomview');
 
@@ -112,28 +131,28 @@ Peaks.init(options, function(err, peaksInstance) {
     overview.enableSeek(event.target.checked);
   });
 
-  document.getElementById('waveform-drag-mode').addEventListener('change', function(event) {
+  document.getElementById('waveform-drag-mode').addEventListener('change', function (event) {
     var view = peaksInstance.views.getView('spectrogramZoomview');
 
     view.setWaveformDragMode(event.target.value);
   });
 
-  document.getElementById('enable-segment-dragging').addEventListener('change', function(event) {
+  document.getElementById('enable-segment-dragging').addEventListener('change', function (event) {
     var zoomview = peaksInstance.views.getView('spectrogramZoomview');
 
     zoomview.enableSegmentDragging(event.target.checked);
   });
 
-  document.getElementById('segment-drag-mode').addEventListener('change', function(event) {
+  document.getElementById('segment-drag-mode').addEventListener('change', function (event) {
     var view = peaksInstance.views.getView('spectrogramZoomview');
 
     view.setSegmentDragMode(event.target.value);
   });
 
-  document.querySelector('body').addEventListener('click', function(event) {
+  document.querySelector('body').addEventListener('click', function (event) {
     var element = event.target;
-    var action  = element.getAttribute('data-action');
-    var id      = element.getAttribute('data-id');
+    var action = element.getAttribute('data-action');
+    var id = element.getAttribute('data-id');
 
     if (action === 'play-segment') {
       var segment = peaksInstance.segments.getSegment(id);
@@ -151,14 +170,14 @@ Peaks.init(options, function(err, peaksInstance) {
     }
   });
 
-   /* spectrogram controls */
-  document.getElementById('opacity').addEventListener('input', function(event) {
+  /* spectrogram controls */
+  document.getElementById('opacity').addEventListener('input', function (event) {
     const value = parseFloat(event.target.value);
     peaksInstance.options.spectrogramZoomview.spectrogramOpacity = value;
     peaksInstance.views.getView('spectrogramZoomview').setOpacity(value);
   });
 
-  document.querySelector('input[data-action="toggle-waveform"]').addEventListener('change', function(event) {
+  document.querySelector('input[data-action="toggle-waveform"]').addEventListener('change', function (event) {
     const value = event.target.checked;
     if (value) {
       peaksInstance.views.getView('spectrogramZoomview').setWaveformOpacity(1.0);
@@ -169,7 +188,7 @@ Peaks.init(options, function(err, peaksInstance) {
   });
 
 
-  document.querySelector('input[data-action="toggle-spectrogram"]').addEventListener('change', function(event) {
+  document.querySelector('input[data-action="toggle-spectrogram"]').addEventListener('change', function (event) {
     const value = event.target.checked;
     if (value) {
       peaksInstance.views.getView('spectrogramZoomview').setOpacity(1.0);
@@ -180,7 +199,7 @@ Peaks.init(options, function(err, peaksInstance) {
   });
 
   /* set source */
-  document.querySelector('input[data-action="set-source"]').addEventListener('click', function(event) {
+  document.querySelector('input[data-action="set-source"]').addEventListener('click', function (event) {
     const options = {
       spectrogramData: {
         image: "test.png",
@@ -222,15 +241,15 @@ Peaks.init(options, function(err, peaksInstance) {
     "10": 5.0
   };
 
-  document.getElementById('amplitude-scale').addEventListener('input', function(event) {
+  document.getElementById('amplitude-scale').addEventListener('input', function (event) {
     var scale = amplitudeScales[event.target.value];
 
     peaksInstance.views.getView('spectrogramZoomview').setAmplitudeScale(scale);
     peaksInstance.views.getView('spectrogramOverview').setAmplitudeScale(scale);
   });
 
-  document.querySelector('button[data-action="resize-width"]').addEventListener('click', function(event) {
-    document.querySelectorAll('.waveform-container').forEach(function(container) {
+  document.querySelector('button[data-action="resize-width"]').addEventListener('click', function (event) {
+    document.querySelectorAll('.waveform-container').forEach(function (container) {
       container.style.width = container.offsetWidth === 1000 ? "700px" : "1000px";
     });
 
@@ -253,12 +272,12 @@ Peaks.init(options, function(err, peaksInstance) {
     }
   });
 
-  document.querySelector('button[data-action="resize-height"]').addEventListener('click', function(event) {
+  document.querySelector('button[data-action="resize-height"]').addEventListener('click', function (event) {
     const zoomviewContainer = document.getElementById('spectrogram-zoomview-container');
     const overviewContainer = document.getElementById('spectrogram-overview-container');
 
     zoomviewContainer.style.height = zoomviewContainer.offsetHeight === 200 ? "300px" : "200px";
-    overviewContainer.style.height = overviewContainer.offsetHeight === 200 ? "85px"  : "200px";
+    overviewContainer.style.height = overviewContainer.offsetHeight === 200 ? "85px" : "200px";
 
     const zoomview = peaksInstance.views.getView('spectrogramZoomview');
 
@@ -273,7 +292,7 @@ Peaks.init(options, function(err, peaksInstance) {
     }
   });
 
-  document.querySelector('button[data-action="toggle-spectrogram-zoomview"]').addEventListener('click', function(event) {
+  document.querySelector('button[data-action="toggle-spectrogram-zoomview"]').addEventListener('click', function (event) {
     var container = document.getElementById('spectrogram-zoomview-container');
     var spectrogramview = peaksInstance.views.getView('spectrogramZoomview');
 
@@ -287,7 +306,7 @@ Peaks.init(options, function(err, peaksInstance) {
     }
   });
 
-  document.querySelector('button[data-action="toggle-spectrogram-overview"]').addEventListener('click', function(event) {
+  document.querySelector('button[data-action="toggle-spectrogram-overview"]').addEventListener('click', function (event) {
     var container = document.getElementById('spectrogram-overview-container');
     var overview = peaksInstance.views.getView('spectrogramOverview');
 
@@ -306,95 +325,95 @@ Peaks.init(options, function(err, peaksInstance) {
 
   // Point events
 
-  peaksInstance.on('points.add', function(event) {
+  peaksInstance.on('points.add', function (event) {
     console.log('points.add:', event);
   });
 
-  peaksInstance.on('points.mouseenter', function(event) {
+  peaksInstance.on('points.mouseenter', function (event) {
     console.log('points.mouseenter:', event);
   });
 
-  peaksInstance.on('points.mouseleave', function(event) {
+  peaksInstance.on('points.mouseleave', function (event) {
     console.log('points.mouseleave:', event);
   });
 
-  peaksInstance.on('points.click', function(event) {
+  peaksInstance.on('points.click', function (event) {
     console.log('points.click:', event);
   });
 
-  peaksInstance.on('points.dblclick', function(event) {
+  peaksInstance.on('points.dblclick', function (event) {
     console.log('points.dblclick:', event);
   });
 
-  peaksInstance.on('points.contextmenu', function(event) {
+  peaksInstance.on('points.contextmenu', function (event) {
     event.evt.preventDefault();
 
     console.log('points.contextmenu:', event);
   });
 
-  peaksInstance.on('points.dragstart', function(event) {
+  peaksInstance.on('points.dragstart', function (event) {
     console.log('points.dragstart:', event);
   });
 
-  peaksInstance.on('points.dragmove', function(event) {
+  peaksInstance.on('points.dragmove', function (event) {
     console.log('points.dragmove:', event);
   });
 
-  peaksInstance.on('points.dragend', function(event) {
+  peaksInstance.on('points.dragend', function (event) {
     console.log('points.dragend:', event);
   });
 
   // Segment events
 
-  peaksInstance.on('segments.add', function(event) {
+  peaksInstance.on('segments.add', function (event) {
     console.log('segments.add:', event);
   });
 
-  peaksInstance.on('segments.insert', function(event) {
+  peaksInstance.on('segments.insert', function (event) {
     console.log('segments.insert:', event);
   });
 
-  peaksInstance.on('segments.update', function(event) {
+  peaksInstance.on('segments.update', function (event) {
     console.log('segments.update:', event);
   });
 
-  peaksInstance.on('segments.dragstart', function(event) {
+  peaksInstance.on('segments.dragstart', function (event) {
     console.log('segments.dragstart:', event);
   });
 
-  peaksInstance.on('segments.dragend', function(event) {
+  peaksInstance.on('segments.dragend', function (event) {
     console.log('segments.dragend:', event);
   });
 
-  peaksInstance.on('segments.dragged', function(event) {
+  peaksInstance.on('segments.dragged', function (event) {
     console.log('segments.dragged:', event);
   });
 
-  peaksInstance.on('segments.mouseenter', function(event) {
+  peaksInstance.on('segments.mouseenter', function (event) {
     console.log('segments.mouseenter:', event);
   });
 
-  peaksInstance.on('segments.mouseleave', function(event) {
+  peaksInstance.on('segments.mouseleave', function (event) {
     console.log('segments.mouseleave:', event);
   });
 
-  peaksInstance.on('segments.mousedown', function(event) {
+  peaksInstance.on('segments.mousedown', function (event) {
     console.log('segments.mousedown:', event);
   });
 
-  peaksInstance.on('segments.mouseup', function(event) {
+  peaksInstance.on('segments.mouseup', function (event) {
     console.log('segments.mouseup:', event);
   });
 
-  peaksInstance.on('segments.click', function(event) {
+  peaksInstance.on('segments.click', function (event) {
     console.log('segments.click:', event);
   });
 
-  peaksInstance.on('segments.dblclick', function(event) {
+  peaksInstance.on('segments.dblclick', function (event) {
     console.log('segments.dblclick:', event);
   });
 
-  peaksInstance.on('segments.contextmenu', function(event) {
+  peaksInstance.on('segments.contextmenu', function (event) {
     event.evt.preventDefault();
 
     console.log('segments.contextmenu:', event);
@@ -402,35 +421,35 @@ Peaks.init(options, function(err, peaksInstance) {
 
   // Zoomview waveform events
 
-  peaksInstance.on('zoomview.click', function(event) {
+  peaksInstance.on('zoomview.click', function (event) {
     console.log('zoomview.click:', event);
   });
 
-  peaksInstance.on('zoomview.dblclick', function(event) {
+  peaksInstance.on('zoomview.dblclick', function (event) {
     console.log('zoomview.dblclick:', event);
   });
 
-  peaksInstance.on('zoomview.contextmenu', function(event) {
+  peaksInstance.on('zoomview.contextmenu', function (event) {
     event.evt.preventDefault();
 
     console.log('zoomview.contextmenu:', event);
   });
 
-  peaksInstance.on('zoomview.update', function(event) {
+  peaksInstance.on('zoomview.update', function (event) {
     console.log('zoomview.update:', event);
   });
 
   // Overview waveform events
 
-  peaksInstance.on('overview.click', function(event) {
+  peaksInstance.on('overview.click', function (event) {
     console.log('overview.click:', event);
   });
 
-  peaksInstance.on('overview.dblclick', function(event) {
+  peaksInstance.on('overview.dblclick', function (event) {
     console.log('overview.dblclick:', event);
   });
 
-  peaksInstance.on('overview.contextmenu', function(event) {
+  peaksInstance.on('overview.contextmenu', function (event) {
     event.evt.preventDefault();
 
     console.log('overview.contextmenu:', event);
@@ -438,25 +457,25 @@ Peaks.init(options, function(err, peaksInstance) {
 
   // Player events
 
-  peaksInstance.on('player.seeked', function(time) {
+  peaksInstance.on('player.seeked', function (time) {
     console.log('player.seeked:', time);
   });
 
-  peaksInstance.on('player.playing', function(time) {
+  peaksInstance.on('player.playing', function (time) {
     console.log('player.playing:', time);
   });
 
-  peaksInstance.on('player.pause', function(time) {
+  peaksInstance.on('player.pause', function (time) {
     console.log('player.pause:', time);
   });
 
-  peaksInstance.on('player.ended', function() {
+  peaksInstance.on('player.ended', function () {
     console.log('player.ended');
   });
 
   // Zoom events
 
-  peaksInstance.on('zoom.update', function(event) {
+  peaksInstance.on('zoom.update', function (event) {
     console.log('zoom.update', event);
   });
 });
