@@ -102,6 +102,7 @@ const defaultSpectrogramZoomviewOptions = {
   wheelMode: 'none',
   autoScroll: true,
   autoScrollOffset: 100,
+  enableEditing: true,
   spectrogramOpacity: 1,
   showSpectrogram: true,
   showWaveform: false
@@ -125,7 +126,7 @@ const defaultSpectrogramOverviewOptions = {
   highlightOpacity: 0.3,
   highlightOffset: 11,
   highlightCornerRadius: 2,
-  enableEditing:          false,
+  enableEditing: false,
   spectrogramOpacity: 1,
   showSpectrogram: true,
   showWaveform: false

@@ -29,14 +29,35 @@ const options = {
     },
   },
   segmentOptions: {
-    overlay: true,
-    overlayColor: 'rgb(255, 218, 187)',
-    overlayOpacity: 0.4,
-    overlayBorderColor: '#ffffff',
-    overlayBorderWidth: 2,
-    overlayCornerRadius: 0,
-    // Segment overlay offset from the top and bottom of the waveform view, in pixels
-    overlayOffset: 0
+    overlay:                   false,
+    markers:                   true,
+    startMarkerColor:          '#aaaaaa',
+    endMarkerColor:            '#aaaaaa',
+    waveformColor:             '#0074d9',
+    overlayColor:              '#ff0000',
+    overlayOpacity:            0.3,
+    overlayBorderColor:        '#ff0000',
+    overlayBorderWidth:        2,
+    overlayCornerRadius:       5,
+    overlayOffset:             25,
+    overlayLabelAlign:         'left',
+    overlayLabelVerticalAlign: 'top',
+    overlayLabelPadding:       8,
+    overlayLabelColor:         '#000000',
+    overlayFontFamily:         'sans-serif',
+    overlayFontSize:           12,
+    overlayFontStyle:          'normal'
+
+
+    // overlay: true,
+    // overlayColor: 'rgb(255, 218, 187)',
+    // overlayOpacity: 0.4,
+    // overlayBorderColor: '#ffffff',
+    // overlayBorderWidth: 2,
+    // overlayCornerRadius: 0,
+    // // Segment overlay offset from the top and bottom of the waveform view, in pixels
+    // overlayOffset: 0
+
   },
   mediaElement: document.getElementById('audio'),
   dataUri: {

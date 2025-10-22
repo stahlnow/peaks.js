@@ -35,7 +35,7 @@ import { Text } from 'konva/lib/shapes/Text';
  */
 
 export function createSegmentMarker(options) {
-  if (options.view === 'zoomview') {
+  if (options.view === 'zoomview' || options.view === 'spectrogramZoomview') {
     return new DefaultSegmentMarker(options);
   }
 
